@@ -28,6 +28,7 @@
       -moz-osx-font-smoothing:grayscale;
     }
     .wrap{display:flex;min-height:100vh}
+
     .sidebar{
       width:250px;flex:0 0 250px;
       background:linear-gradient(180deg, rgba(13,16,23,.98), rgba(10,12,16,.98));
@@ -128,7 +129,7 @@
     </nav>
     <div class="hint">
       GitHub Pages • Google Sheet CSV<br/>
-      Loaded via CORS relay (no backend).
+      Uses multiple CORS relays automatically.
     </div>
   </aside>
 
@@ -191,12 +192,18 @@
 </div>
 
 <script>
-/** ========= Your published CSV ========= */
+/** ===== Your published CSV (keep this) ===== */
 const SHEET_CSV =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vTniLUYAcHr8cRTMsBJYVpkGQ9uucvtBjDmmMqez55eV1VHf2LRVuPqhPHsr9uqAlcRa6yRhockT2Yu/pub?gid=0&single=true&output=csv";
 
-/** ========= CORS relay (free) ========= */
-const CSV_URL = "https://api.allorigins.win/raw?url=" + encodeURIComponent(SHEET_CSV);
+/** ===== Multiple relays (try in order) =====
+ * If one is blocked/down, the next one will be used.
+ */
+const RELAYS = [
+  (u) => "https://corsproxy.io/?" + encodeURIComponent(u),
+  (u) => "https://api.allorigins.win/raw?url=" + encodeURIComponent(u),
+  (u) => "https://thingproxy.freeboard.io/fetch/" + u,
+];
 
 function showError(msg){
   const box = document.getElementById("errorBox");
@@ -239,7 +246,7 @@ function renderTable(elId, headers, rows){
 }
 function debounce(fn, ms){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; }
 
-/** CSV parser (handles quotes) */
+/** CSV parser (quotes supported) */
 function parseCSV(text){
   const rows = [];
   let i=0, cur="", row=[], inQ=false;
@@ -262,15 +269,39 @@ function parseCSV(text){
   return rows.filter(r => r.some(v => (v||"").trim() !== ""));
 }
 
+async function fetchWithTimeout(url, ms=12000){
+  const ctrl = new AbortController();
+  const t = setTimeout(()=>ctrl.abort(), ms);
+  try{
+    const res = await fetch(url, { cache:"no-store", signal: ctrl.signal });
+    if(!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
+    return await res.text();
+  } finally {
+    clearTimeout(t);
+  }
+}
+
+async function fetchCSVText(){
+  const errors = [];
+  for(const makeUrl of RELAYS){
+    const u = makeUrl(SHEET_CSV);
+    try{
+      const txt = await fetchWithTimeout(u, 12000);
+      return { text: txt, used: u, errors };
+    } catch(e){
+      errors.push(`${u}\n  -> ${String(e?.message || e)}`);
+    }
+  }
+  throw new Error("All relays failed:\n\n" + errors.join("\n\n"));
+}
+
 async function load(){
   clearError();
   const statusEl = document.getElementById("statusText");
   statusEl.textContent = "Loading…";
 
   try{
-    const res = await fetch(CSV_URL, { cache:"no-store" });
-    if(!res.ok) throw new Error(`Fetch failed: ${res.status} ${res.statusText}`);
-    const text = await res.text();
+    const { text, used } = await fetchCSVText();
 
     const grid = parseCSV(text);
     if(grid.length < 2) throw new Error("Sheet returned no rows.");
@@ -309,14 +340,12 @@ async function load(){
     }
     if(!raw.length) throw new Error("No parsable rows. Check Date format in sheet.");
 
-    // Populate server dropdown
     const servers = [...new Set(raw.map(x=>x.server).filter(Boolean))].sort();
     const serverSel = document.getElementById("serverFilter");
     const prev = serverSel.value;
     serverSel.innerHTML = `<option value="">All servers</option>` + servers.map(s=>`<option value="${s}">${s}</option>`).join("");
     serverSel.value = servers.includes(prev) ? prev : "";
 
-    // Filters
     const fServer = serverSel.value.trim();
     const fCode = document.getElementById("codeFilter").value.trim().toLowerCase();
     const fPlayer = document.getElementById("playerFilter").value.trim().toLowerCase();
@@ -328,7 +357,6 @@ async function load(){
       return true;
     });
 
-    // KPIs
     const total = data.length;
     const bot = data.filter(x => x.status.toLowerCase().includes("bot")).length;
     const player = data.filter(x => x.status.toLowerCase().includes("player")).length;
@@ -343,7 +371,6 @@ async function load(){
     const last = data.slice().sort((a,b)=>b.dt-a.dt)[0];
     setText("lastTs", last ? last.dt.toISOString().replace("T"," ").replace("Z"," UTC") : "—");
 
-    // Aggregations
     const byMonth = new Map(), byServer = new Map(), byCode = new Map(), byPlayer = new Map();
     for(const x of data){
       inc(byMonth, x.month);
@@ -393,7 +420,8 @@ async function load(){
     renderTable("tblCode", ["Code","Redeems"], cTop.map(([k,v])=>[k, v.toLocaleString()]));
     renderTable("tblPlayer", ["Player","Redeems"], pTop.map(([k,v])=>[k, v.toLocaleString()]));
 
-    statusEl.textContent = `Loaded ${total.toLocaleString()} rows`;
+    statusEl.textContent = `Loaded ${total.toLocaleString()} rows • source: relay ok`;
+    // (If you ever want to see which relay worked, open devtools > Network)
   } catch(err){
     statusEl.textContent = "";
     showError(String(err?.message || err));
