@@ -12,7 +12,7 @@
     :root{
       --bg:#0a0c10; --sidebar:#0d1017; --panel:#101624; --panel2:#0f1421;
       --border:#1d2638; --text:#e9edf3; --muted:#96a0b2;
-      --accent:#cdb26b; --blue:#6ea8ff; --danger:#ff6b6b;
+      --accent:#cdb26b; --blue:#6ea8ff; --danger:#ff6b6b; --ok:#58d68d;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -28,7 +28,6 @@
       -moz-osx-font-smoothing:grayscale;
     }
     .wrap{display:flex;min-height:100vh}
-
     .sidebar{
       width:250px;flex:0 0 250px;
       background:linear-gradient(180deg, rgba(13,16,23,.98), rgba(10,12,16,.98));
@@ -107,9 +106,54 @@
     tr:hover td{background:rgba(110,168,255,.06)}
     .right{text-align:right}
 
+    .actions{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:12px;
+      margin-bottom:16px;
+    }
+    .actionCard{
+      background:rgba(16,22,36,.78);
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:14px;
+      box-shadow:0 0 0 1px rgba(0,0,0,.25) inset;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .actionTitle{
+      font-size:11px;
+      color:var(--muted);
+      letter-spacing:1px;
+      text-transform:uppercase;
+      font-weight:900;
+      margin:0;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+    .tag{
+      font-size:11px;
+      font-weight:900;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid rgba(29,38,56,.9);
+      color:var(--muted);
+      background:rgba(10,12,16,.45);
+    }
+    .tag.ok{color:rgba(88,214,141,.95);border-color:rgba(88,214,141,.25);background:rgba(88,214,141,.06)}
+    .tag.bad{color:rgba(255,107,107,.95);border-color:rgba(255,107,107,.25);background:rgba(255,107,107,.06)}
+    .actionRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .msg{font-size:12px;color:var(--muted)}
+    .msg.ok{color:rgba(88,214,141,.95)}
+    .msg.bad{color:rgba(255,107,107,.95)}
+    .primary{border-color:rgba(205,178,107,.25)}
+    .primary:hover{border-color:rgba(205,178,107,.55)}
+
     @media(max-width:1100px){
       .grid4{grid-template-columns:repeat(2,1fr)}
-      .charts,.tables{grid-template-columns:1fr}
+      .charts,.tables,.actions{grid-template-columns:1fr}
       .sidebar{display:none}
       main{padding:18px}
     }
@@ -125,7 +169,7 @@
       <a href="#month">By Month</a>
       <a href="#server">By Server</a>
       <a href="#code">By Code</a>
-      <a href="#player">By Player</a>
+      <a href="#actions">Self Service</a>
     </nav>
     <div class="hint">
       GitHub Pages • Google Sheet CSV<br/>
@@ -137,7 +181,7 @@
     <div class="top">
       <div>
         <h2 class="title">KS Gift Code Redeem BOT</h2>
-        <div class="sub">Month • Server • Code • Player — live from your sheet</div>
+        <div class="sub">Month • Server • Code — live from your sheet</div>
       </div>
       <div class="pill">
         <span>Rows: <b id="rowsCount">—</b></span>
@@ -149,7 +193,6 @@
     <div class="row">
       <select id="serverFilter"><option value="">All servers</option></select>
       <input id="codeFilter" placeholder="Filter code (contains)" />
-      <input id="playerFilter" placeholder="Filter player name (contains)" />
       <button id="reloadBtn">Reload</button>
       <span class="small" id="statusText"></span>
     </div>
@@ -176,9 +219,9 @@
         <h3>Top codes <span class="badge">Top 10</span></h3>
         <canvas id="chartCode"></canvas>
       </div>
-      <div class="chartbox" id="player">
-        <h3>Top players <span class="badge">Top 10</span></h3>
-        <canvas id="chartPlayer"></canvas>
+      <div class="chartbox">
+        <h3>Success vs failed <span class="badge">All</span></h3>
+        <canvas id="chartStatus"></canvas>
       </div>
     </section>
 
@@ -186,25 +229,57 @@
       <div class="tablebox"><h3>By month</h3><table id="tblMonth"></table></div>
       <div class="tablebox"><h3>By server</h3><table id="tblServer"></table></div>
       <div class="tablebox"><h3>By code</h3><table id="tblCode"></table></div>
-      <div class="tablebox"><h3>By player</h3><table id="tblPlayer"></table></div>
+      <div class="tablebox"><h3>Status breakdown</h3><table id="tblStatus"></table></div>
+    </section>
+
+    <section class="actions" id="actions" style="margin-top:16px;">
+      <div class="actionCard">
+        <div class="actionTitle">
+          <span>Add new player</span>
+          <span id="tagPlayer" class="tag bad">not configured</span>
+        </div>
+        <div class="actionRow">
+          <input id="newPlayerId" placeholder="Enter Player ID (e.g. 123456789)" style="min-width:260px;">
+          <button class="primary" id="btnAddPlayer">Add Player</button>
+        </div>
+        <div id="msgPlayer" class="msg">Adds a player ID to your allowlist sheet via webhook.</div>
+      </div>
+
+      <div class="actionCard">
+        <div class="actionTitle">
+          <span>Enter new code</span>
+          <span id="tagCode" class="tag bad">not configured</span>
+        </div>
+        <div class="actionRow">
+          <input id="newCode" placeholder="Enter gift code (e.g. THANKS2026)" style="min-width:260px;">
+          <button class="primary" id="btnRunCode">Execute Bot</button>
+        </div>
+        <div id="msgCode" class="msg">Triggers your bot to redeem this code (via webhook).</div>
+      </div>
     </section>
   </main>
 </div>
 
 <script>
-/** ===== Your published CSV (keep this) ===== */
+/** ===================== CONFIG ===================== */
+// Your published CSV:
 const SHEET_CSV =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vTniLUYAcHr8cRTMsBJYVpkGQ9uucvtBjDmmMqez55eV1VHf2LRVuPqhPHsr9uqAlcRa6yRhockT2Yu/pub?gid=0&single=true&output=csv";
 
-/** ===== Multiple relays (try in order) =====
- * If one is blocked/down, the next one will be used.
- */
+// ✅ Paste your webhook URLs here when ready.
+// Option 1: Google Apps Script Web App that appends to a "players" sheet.
+// Option 2: Your own endpoint.
+const ADD_PLAYER_WEBHOOK = ""; // e.g. "https://script.google.com/macros/s/XXXXX/exec"
+const RUN_BOT_WEBHOOK    = ""; // e.g. "https://your-bot-endpoint.example.com/run"
+
+/** Multiple relays (auto fallback) */
 const RELAYS = [
   (u) => "https://corsproxy.io/?" + encodeURIComponent(u),
   (u) => "https://api.allorigins.win/raw?url=" + encodeURIComponent(u),
   (u) => "https://thingproxy.freeboard.io/fetch/" + u,
 ];
 
+/** ===================== Helpers ===================== */
 function showError(msg){
   const box = document.getElementById("errorBox");
   box.style.display = "block";
@@ -221,7 +296,21 @@ const clean = (s)=> (s ?? "").toString().trim();
 const toDate = (s)=> { const d = new Date(s); return isNaN(d) ? null : d; };
 const monthKey = (d)=> `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,"0")}`;
 const inc = (m,k)=> m.set(k,(m.get(k)||0)+1);
-const topN = (m,n)=> [...m.entries()].sort((a,b)=>b[1]-a[1]).slice(0,n);
+
+/** Put "(none)" last always */
+function serverSort(a,b){
+  const A = a[0], B = b[0];
+  const an = (A || "").toLowerCase() === "(none)";
+  const bn = (B || "").toLowerCase() === "(none)";
+  if(an && !bn) return 1;
+  if(!an && bn) return -1;
+  return b[1]-a[1];
+}
+const topN = (m,n, sorter=null)=> {
+  const arr = [...m.entries()];
+  arr.sort(sorter || ((a,b)=>b[1]-a[1]));
+  return arr.slice(0,n);
+};
 
 let charts = {};
 function ensureChart(id, type, data, options){
@@ -295,14 +384,14 @@ async function fetchCSVText(){
   throw new Error("All relays failed:\n\n" + errors.join("\n\n"));
 }
 
+/** ===================== Load & Render ===================== */
 async function load(){
   clearError();
   const statusEl = document.getElementById("statusText");
   statusEl.textContent = "Loading…";
 
   try{
-    const { text, used } = await fetchCSVText();
-
+    const { text } = await fetchCSVText();
     const grid = parseCSV(text);
     if(grid.length < 2) throw new Error("Sheet returned no rows.");
 
@@ -335,28 +424,33 @@ async function load(){
         code: clean(row[iCode]),
         status: clean(row[iStat]),
         playerName: clean(row[iPnm]),
-        server: clean(row[iSrv]),
+        server: clean(row[iSrv]) || "(none)",
       });
     }
     if(!raw.length) throw new Error("No parsable rows. Check Date format in sheet.");
 
-    const servers = [...new Set(raw.map(x=>x.server).filter(Boolean))].sort();
+    // dropdown servers (none last)
+    const servers = [...new Set(raw.map(x=>x.server).filter(Boolean))].sort((a,b)=>{
+      const an = a.toLowerCase()==="(none)", bn = b.toLowerCase()==="(none)";
+      if(an && !bn) return 1; if(!an && bn) return -1;
+      return a.localeCompare(b);
+    });
     const serverSel = document.getElementById("serverFilter");
     const prev = serverSel.value;
     serverSel.innerHTML = `<option value="">All servers</option>` + servers.map(s=>`<option value="${s}">${s}</option>`).join("");
     serverSel.value = servers.includes(prev) ? prev : "";
 
+    // filters
     const fServer = serverSel.value.trim();
     const fCode = document.getElementById("codeFilter").value.trim().toLowerCase();
-    const fPlayer = document.getElementById("playerFilter").value.trim().toLowerCase();
 
     const data = raw.filter(x => {
       if(fServer && x.server !== fServer) return false;
       if(fCode && !x.code.toLowerCase().includes(fCode)) return false;
-      if(fPlayer && !x.playerName.toLowerCase().includes(fPlayer)) return false;
       return true;
     });
 
+    // KPIs
     const total = data.length;
     const bot = data.filter(x => x.status.toLowerCase().includes("bot")).length;
     const player = data.filter(x => x.status.toLowerCase().includes("player")).length;
@@ -371,21 +465,24 @@ async function load(){
     const last = data.slice().sort((a,b)=>b.dt-a.dt)[0];
     setText("lastTs", last ? last.dt.toISOString().replace("T"," ").replace("Z"," UTC") : "—");
 
-    const byMonth = new Map(), byServer = new Map(), byCode = new Map(), byPlayer = new Map();
+    // aggs
+    const byMonth = new Map(), byServer = new Map(), byCode = new Map(), byStatus = new Map();
     for(const x of data){
       inc(byMonth, x.month);
-      inc(byServer, x.server || "(none)");
+      inc(byServer, x.server);
       inc(byCode, x.code || "(none)");
-      inc(byPlayer, (x.playerName || x.playerId || "(unknown)"));
+      inc(byStatus, x.status || "(none)");
     }
 
     const months = [...byMonth.entries()].sort((a,b)=>a[0].localeCompare(b[0]));
     setText("badgeMonth", months.length ? `${months[0][0]} → ${months[months.length-1][0]}` : "—");
 
-    const sTop = topN(byServer, 10);
+    const sTop = topN(byServer, 10, serverSort);      // "(none)" forced last
+    const sAll = [...byServer.entries()].sort(serverSort); // table uses full sorted list
     const cTop = topN(byCode, 10);
-    const pTop = topN(byPlayer, 10);
+    const stAll = [...byStatus.entries()].sort((a,b)=>b[1]-a[1]);
 
+    // charts
     Chart.defaults.color = "#96a0b2";
     Chart.defaults.borderColor = "rgba(29,38,56,.85)";
     Chart.defaults.font.family = "Inter";
@@ -410,28 +507,95 @@ async function load(){
       datasets:[{ data: cTop.map(x=>x[1]), backgroundColor:"rgba(110,168,255,.85)", borderRadius:8, barThickness:18 }]
     }, baseChartOptions());
 
-    ensureChart("chartPlayer","bar",{
-      labels: pTop.map(x=>x[0]),
-      datasets:[{ data: pTop.map(x=>x[1]), backgroundColor:"rgba(205,178,107,.85)", borderRadius:8, barThickness:18 }]
+    const statusPairs = stAll.slice(0,8);
+    ensureChart("chartStatus","bar",{
+      labels: statusPairs.map(x=>x[0]),
+      datasets:[{ data: statusPairs.map(x=>x[1]), backgroundColor:"rgba(205,178,107,.85)", borderRadius:8, barThickness:18 }]
     }, baseChartOptions());
 
+    // tables
     renderTable("tblMonth", ["Month","Redeems"], months.slice(-12).reverse().map(([k,v])=>[k, v.toLocaleString()]));
-    renderTable("tblServer", ["Server","Redeems"], sTop.map(([k,v])=>[k, v.toLocaleString()]));
-    renderTable("tblCode", ["Code","Redeems"], cTop.map(([k,v])=>[k, v.toLocaleString()]));
-    renderTable("tblPlayer", ["Player","Redeems"], pTop.map(([k,v])=>[k, v.toLocaleString()]));
+    renderTable("tblServer", ["Server","Redeems"], sAll.map(([k,v])=>[k, v.toLocaleString()]));
+    renderTable("tblCode", ["Code","Redeems"], [...byCode.entries()].sort((a,b)=>b[1]-a[1]).slice(0,20).map(([k,v])=>[k, v.toLocaleString()]));
+    renderTable("tblStatus", ["Status","Count"], stAll.map(([k,v])=>[k, v.toLocaleString()]));
 
-    statusEl.textContent = `Loaded ${total.toLocaleString()} rows • source: relay ok`;
-    // (If you ever want to see which relay worked, open devtools > Network)
+    statusEl.textContent = `Loaded ${total.toLocaleString()} rows`;
   } catch(err){
     statusEl.textContent = "";
     showError(String(err?.message || err));
   }
 }
 
+/** ===================== Webhooks (self service) ===================== */
+function setTag(tagId, ok){
+  const el = document.getElementById(tagId);
+  el.classList.remove("ok","bad");
+  el.classList.add(ok ? "ok" : "bad");
+  el.textContent = ok ? "configured" : "not configured";
+}
+setTag("tagPlayer", !!ADD_PLAYER_WEBHOOK);
+setTag("tagCode", !!RUN_BOT_WEBHOOK);
+
+async function postJson(url, body){
+  const res = await fetch(url, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify(body),
+  });
+  const ct = res.headers.get("content-type") || "";
+  let json = null;
+  if(ct.includes("application/json")){
+    try{ json = await res.json(); } catch {}
+  } else {
+    try{ await res.text(); } catch {}
+  }
+  if(!res.ok) throw new Error(json?.error || `Request failed (${res.status})`);
+  return json;
+}
+
+function setMsg(id, text, kind){
+  const el = document.getElementById(id);
+  el.classList.remove("ok","bad");
+  if(kind) el.classList.add(kind);
+  el.textContent = text;
+}
+
+document.getElementById("btnAddPlayer").addEventListener("click", async () => {
+  const id = clean(document.getElementById("newPlayerId").value);
+  if(!id) return setMsg("msgPlayer","Enter a Player ID first.","bad");
+  if(!ADD_PLAYER_WEBHOOK) return setMsg("msgPlayer","ADD_PLAYER_WEBHOOK is not configured in index.html yet.","bad");
+
+  setMsg("msgPlayer","Adding…","");
+
+  try{
+    await postJson(ADD_PLAYER_WEBHOOK, { action:"add_player", player_id: id, ts: new Date().toISOString() });
+    setMsg("msgPlayer",`✅ Added Player ID: ${id}`,"ok");
+    document.getElementById("newPlayerId").value = "";
+  } catch(e){
+    setMsg("msgPlayer",`❌ ${String(e?.message || e)}`,"bad");
+  }
+});
+
+document.getElementById("btnRunCode").addEventListener("click", async () => {
+  const code = clean(document.getElementById("newCode").value);
+  if(!code) return setMsg("msgCode","Enter a code first.","bad");
+  if(!RUN_BOT_WEBHOOK) return setMsg("msgCode","RUN_BOT_WEBHOOK is not configured in index.html yet.","bad");
+
+  setMsg("msgCode","Executing…","");
+
+  try{
+    await postJson(RUN_BOT_WEBHOOK, { action:"run_code", code, ts: new Date().toISOString() });
+    setMsg("msgCode",`✅ Bot triggered for code: ${code}`,"ok");
+    document.getElementById("newCode").value = "";
+  } catch(e){
+    setMsg("msgCode",`❌ ${String(e?.message || e)}`,"bad");
+  }
+});
+
+/** ===================== Events ===================== */
 document.getElementById("reloadBtn").addEventListener("click", load);
 document.getElementById("serverFilter").addEventListener("change", load);
 document.getElementById("codeFilter").addEventListener("input", debounce(load, 250));
-document.getElementById("playerFilter").addEventListener("input", debounce(load, 250));
 
 load();
 </script>
