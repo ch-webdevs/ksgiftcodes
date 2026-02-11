@@ -1,0 +1,614 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>KS Gift Code Redeem BOT</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#0a0c10;
+      --sidebar:#0d1017;
+      --panel:#101624;
+      --panel2:#0f1421;
+      --border:#1d2638;
+      --text:#e9edf3;
+      --muted:#96a0b2;
+
+      --accent:#cdb26b;   /* gold */
+      --accent2:#6ea8ff;  /* cool highlight */
+      --danger:#ff6b6b;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:
+        radial-gradient(1200px 600px at 30% 0%, rgba(110,168,255,.08), transparent 60%),
+        radial-gradient(1200px 600px at 90% 20%, rgba(205,178,107,.08), transparent 55%),
+        var(--bg);
+      color:var(--text);
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .wrap{display:flex;min-height:100vh}
+
+    /* Sidebar */
+    .sidebar{
+      width:250px;flex:0 0 250px;
+      background:linear-gradient(180deg, rgba(13,16,23,.98), rgba(10,12,16,.98));
+      border-right:1px solid var(--border);
+      padding:22px 18px;
+      position:sticky;top:0;height:100vh;
+    }
+    .brand{
+      font-weight:700;
+      letter-spacing:.3px;
+      margin:0 0 18px;
+      color:var(--text);
+      font-size:16px;
+    }
+    .brand .gold{color:var(--accent)}
+    .nav a{
+      display:block;
+      text-decoration:none;
+      color:var(--muted);
+      padding:10px 10px;
+      border:1px solid transparent;
+      border-radius:6px;
+      margin-bottom:8px;
+      font-size:13px;
+      font-weight:500;
+    }
+    .nav a:hover{
+      color:var(--text);
+      border-color:rgba(205,178,107,.25);
+      background:rgba(16,22,36,.7);
+    }
+    .nav a.active{
+      color:var(--text);
+      border-color:rgba(110,168,255,.35);
+      background:rgba(110,168,255,.08);
+    }
+    .hint{
+      margin-top:14px;
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.35;
+      border-top:1px solid var(--border);
+      padding-top:14px;
+    }
+
+    /* Main */
+    main{
+      flex:1;
+      padding:28px 30px;
+      max-width:1500px;
+    }
+    .top{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:18px;
+    }
+    .title{
+      margin:0;
+      font-size:22px;
+      font-weight:700;
+      letter-spacing:.2px;
+    }
+    .sub{
+      margin-top:6px;
+      color:var(--muted);
+      font-size:12px;
+    }
+    .pill{
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      border:1px solid var(--border);
+      background:rgba(16,22,36,.75);
+      padding:10px 12px;
+      border-radius:8px;
+      color:var(--muted);
+      font-size:12px;
+      backdrop-filter: blur(6px);
+    }
+    .pill b{color:var(--text);font-weight:600}
+
+    .row{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      margin:10px 0 18px;
+    }
+    input,select,button{
+      background:rgba(16,22,36,.75);
+      border:1px solid var(--border);
+      color:var(--text);
+      border-radius:8px;
+      padding:10px 10px;
+      font-size:12px;
+      outline:none;
+      backdrop-filter: blur(6px);
+    }
+    input::placeholder{color:rgba(150,160,178,.7)}
+    button{
+      cursor:pointer;
+      font-weight:600;
+      border-color:rgba(110,168,255,.25);
+    }
+    button:hover{border-color:rgba(110,168,255,.5)}
+    .small{font-size:11px;color:var(--muted)}
+    .error{
+      display:none;
+      margin-top:10px;
+      color:var(--danger);
+      font-size:12px;
+      white-space:pre-wrap;
+      border:1px solid rgba(255,107,107,.25);
+      background:rgba(255,107,107,.06);
+      padding:10px 12px;
+      border-radius:8px;
+    }
+
+    /* KPI cards */
+    .grid4{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:12px;
+      margin:0 0 16px;
+    }
+    .card{
+      background:rgba(16,22,36,.78);
+      border:1px solid var(--border);
+      border-radius:10px;
+      padding:14px;
+      box-shadow: 0 0 0 1px rgba(0,0,0,.25) inset;
+    }
+    .k{
+      color:var(--muted);
+      font-size:11px;
+      letter-spacing:1px;
+      text-transform:uppercase;
+      font-weight:600;
+    }
+    .v{
+      margin-top:8px;
+      font-size:22px;
+      font-weight:700;
+      color:var(--accent);
+    }
+
+    /* Charts */
+    .charts{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:12px;
+      margin-bottom:16px;
+    }
+    .chartbox{
+      background:rgba(16,22,36,.78);
+      border:1px solid var(--border);
+      border-radius:10px;
+      padding:12px 12px 10px;
+      height:240px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      box-shadow: 0 0 0 1px rgba(0,0,0,.25) inset;
+    }
+    .chartbox h3{
+      margin:0;
+      font-size:11px;
+      color:var(--muted);
+      letter-spacing:1px;
+      text-transform:uppercase;
+      font-weight:700;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+    .chartbox .badge{
+      color:rgba(205,178,107,.9);
+      font-weight:700;
+      font-size:11px;
+      letter-spacing:.2px;
+    }
+    .chartbox canvas{flex:1;min-height:0}
+
+    /* Tables */
+    .tables{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:12px;
+    }
+    .tablebox{
+      background:rgba(16,22,36,.78);
+      border:1px solid var(--border);
+      border-radius:10px;
+      padding:12px;
+      box-shadow: 0 0 0 1px rgba(0,0,0,.25) inset;
+    }
+    .tablebox h3{
+      margin:0 0 10px;
+      font-size:11px;
+      color:var(--muted);
+      letter-spacing:1px;
+      text-transform:uppercase;
+      font-weight:700;
+    }
+    table{width:100%;border-collapse:collapse}
+    th,td{
+      padding:10px 8px;
+      border-bottom:1px solid rgba(29,38,56,.9);
+      font-size:13px;
+    }
+    th{
+      color:rgba(150,160,178,.9);
+      font-weight:700;
+      text-align:left;
+      font-size:11px;
+      letter-spacing:1px;
+      text-transform:uppercase;
+    }
+    tr:hover td{background:rgba(110,168,255,.06)}
+    .right{text-align:right}
+
+    @media(max-width:1100px){
+      .grid4{grid-template-columns:repeat(2,1fr)}
+      .charts,.tables{grid-template-columns:1fr}
+      .sidebar{display:none}
+      main{padding:18px}
+    }
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+  <aside class="sidebar">
+    <h1 class="brand"><span class="gold">KS</span> Gift Code Redeem BOT</h1>
+    <nav class="nav">
+      <a class="active" href="#overview">Overview</a>
+      <a href="#month">By Month</a>
+      <a href="#server">By Server</a>
+      <a href="#code">By Code</a>
+      <a href="#player">By Player</a>
+    </nav>
+    <div class="hint">
+      Hosted on GitHub Pages.<br/>
+      Data loaded from Google Sheets (JSONP, no CORS).
+    </div>
+  </aside>
+
+  <main>
+    <div class="top">
+      <div>
+        <h2 class="title">KS Gift Code Redeem BOT</h2>
+        <div class="sub">Month • Server • Code • Player — live from your sheet</div>
+      </div>
+      <div class="pill">
+        <span>Rows: <b id="rowsCount">—</b></span>
+        <span>•</span>
+        <span>Last: <b id="lastTs">—</b></span>
+      </div>
+    </div>
+
+    <div class="row">
+      <select id="serverFilter"><option value="">All servers</option></select>
+      <input id="codeFilter" placeholder="Filter code (contains)" />
+      <input id="playerFilter" placeholder="Filter player name (contains)" />
+      <button id="reloadBtn">Reload</button>
+      <span class="small" id="statusText"></span>
+    </div>
+
+    <div id="errorBox" class="error"></div>
+
+    <section class="grid4" id="overview">
+      <div class="card"><div class="k">Total redeems</div><div class="v" id="kTotal">—</div></div>
+      <div class="card"><div class="k">Claimed by bot</div><div class="v" id="kBot">—</div></div>
+      <div class="card"><div class="k">Claimed by player</div><div class="v" id="kPlayer">—</div></div>
+      <div class="card"><div class="k">Unique players</div><div class="v" id="kUnique">—</div></div>
+    </section>
+
+    <section class="charts">
+      <div class="chartbox" id="month">
+        <h3>Redeems by month <span class="badge" id="badgeMonth">—</span></h3>
+        <canvas id="chartMonth"></canvas>
+      </div>
+      <div class="chartbox" id="server">
+        <h3>Top servers <span class="badge" id="badgeServer">Top 10</span></h3>
+        <canvas id="chartServer"></canvas>
+      </div>
+      <div class="chartbox" id="code">
+        <h3>Top codes <span class="badge" id="badgeCode">Top 10</span></h3>
+        <canvas id="chartCode"></canvas>
+      </div>
+      <div class="chartbox" id="player">
+        <h3>Top players <span class="badge" id="badgePlayer">Top 10</span></h3>
+        <canvas id="chartPlayer"></canvas>
+      </div>
+    </section>
+
+    <section class="tables">
+      <div class="tablebox"><h3>By month</h3><table id="tblMonth"></table></div>
+      <div class="tablebox"><h3>By server</h3><table id="tblServer"></table></div>
+      <div class="tablebox"><h3>By code</h3><table id="tblCode"></table></div>
+      <div class="tablebox"><h3>By player</h3><table id="tblPlayer"></table></div>
+    </section>
+  </main>
+</div>
+
+<script>
+/**
+ * JSONP (no CORS) for your published sheet.
+ * Your published "CSV" link was:
+ * https://docs.google.com/spreadsheets/d/e/2PACX-.../pub?gid=0&single=true&output=csv
+ *
+ * JSONP endpoint for the same published sheet:
+ * https://docs.google.com/spreadsheets/d/e/2PACX-.../gviz/tq?gid=0&tqx=out:json&callback=...
+ */
+const GVIZ_JSONP_URL =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vTniLUYAcHr8cRTMsBJYVpkGQ9uucvtBjDmmMqez55eV1VHf2LRVuPqhPHsr9uqAlcRa6yRhockT2Yu/gviz/tq?gid=0&tqx=out:json&callback=";
+
+function showError(msg){
+  const box = document.getElementById("errorBox");
+  box.style.display = "block";
+  box.textContent = msg;
+}
+function clearError(){
+  const box = document.getElementById("errorBox");
+  box.style.display = "none";
+  box.textContent = "";
+}
+
+const clean = (s)=> (s ?? "").toString().trim();
+const toDate = (s)=> { const d = new Date(s); return isNaN(d) ? null : d; };
+const monthKey = (d)=> `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,"0")}`;
+const inc = (m,k)=> m.set(k,(m.get(k)||0)+1);
+const topN = (m,n)=> [...m.entries()].sort((a,b)=>b[1]-a[1]).slice(0,n);
+const setText=(id,v)=> document.getElementById(id).textContent = v;
+
+let charts = {};
+function ensureChart(id, type, data, options){
+  if(charts[id]) charts[id].destroy();
+  charts[id] = new Chart(document.getElementById(id), { type, data, options });
+}
+
+function baseChartOptions(){
+  return {
+    responsive:true,
+    maintainAspectRatio:false,
+    plugins:{
+      legend:{display:false},
+      tooltip:{
+        backgroundColor:"rgba(10,12,16,.95)",
+        borderColor:"rgba(205,178,107,.25)",
+        borderWidth:1,
+        titleColor:"#e9edf3",
+        bodyColor:"#e9edf3",
+        padding:10
+      }
+    },
+    scales:{
+      x:{ grid:{ color:"rgba(29,38,56,.7)" }, ticks:{ color:"#96a0b2", font:{ size:11 } } },
+      y:{ grid:{ color:"rgba(29,38,56,.7)" }, ticks:{ color:"#96a0b2", font:{ size:11 } }, beginAtZero:true }
+    }
+  };
+}
+
+function renderTable(elId, headers, rows){
+  const el = document.getElementById(elId);
+  el.innerHTML =
+    `<thead><tr>${headers.map(h=>`<th>${h}</th>`).join("")}</tr></thead>` +
+    `<tbody>${rows.map(r=>`<tr>${r.map((c,i)=>`<td class="${i? "right":""}">${c}</td>`).join("")}</tr>`).join("")}</tbody>`;
+}
+
+/** JSONP loader */
+function gvizJsonp(url){
+  return new Promise((resolve, reject) => {
+    const cb = "__gviz_cb_" + Math.random().toString(36).slice(2);
+    const script = document.createElement("script");
+    const timeout = setTimeout(() => {
+      cleanup();
+      reject(new Error("Timeout loading Google Sheets."));
+    }, 12000);
+
+    function cleanup(){
+      clearTimeout(timeout);
+      script.remove();
+      try { delete window[cb]; } catch {}
+    }
+
+    window[cb] = (payload) => {
+      cleanup();
+      resolve(payload);
+    };
+
+    script.onerror = () => {
+      cleanup();
+      reject(new Error("Failed loading Google Sheets JSONP."));
+    };
+
+    script.src = url + cb;
+    document.head.appendChild(script);
+  });
+}
+
+function gvizToRows(payload){
+  // payload.table.cols: [{label,type}, ...]
+  // payload.table.rows: [{c:[{v,f}, ...]}, ...]
+  const table = payload?.table;
+  if(!table?.cols || !table?.rows) throw new Error("Unexpected sheet response.");
+  const header = table.cols.map(c => clean(c.label));
+  const rows = table.rows.map(r => (r.c || []).map(cell => {
+    const v = cell?.f ?? cell?.v;
+    return v == null ? "" : String(v);
+  }));
+  return { header, rows };
+}
+
+async function load(){
+  clearError();
+  const statusEl = document.getElementById("statusText");
+  statusEl.textContent = "Loading…";
+
+  try{
+    const payload = await gvizJsonp(GVIZ_JSONP_URL);
+    const { header, rows } = gvizToRows(payload);
+
+    const idx = (name)=> header.findIndex(h => h.toLowerCase() === name.toLowerCase());
+
+    const iDate = idx("Date");
+    const iPid  = idx("Player ID");
+    const iCode = idx("Code Name");
+    const iStat = idx("Status");
+    const iPnm  = idx("Player Name");
+    const iSrv  = idx("Server");
+
+    if([iDate,iPid,iCode,iStat,iPnm,iSrv].some(v => v < 0)){
+      throw new Error(
+        "Header mismatch.\nExpected columns:\nDate, Player ID, Code Name, Status, Player Name, Server\n\nGot:\n" +
+        header.join(", ")
+      );
+    }
+
+    const raw = [];
+    for(const r of rows){
+      const dt = toDate(r[iDate]);
+      if(!dt) continue;
+      raw.push({
+        dt,
+        month: monthKey(dt),
+        playerId: clean(r[iPid]),
+        code: clean(r[iCode]),
+        status: clean(r[iStat]),
+        playerName: clean(r[iPnm]),
+        server: clean(r[iSrv]),
+      });
+    }
+    if(!raw.length) throw new Error("No parsable rows (check Date format in sheet).");
+
+    // server dropdown
+    const servers = [...new Set(raw.map(x=>x.server).filter(Boolean))].sort();
+    const serverSel = document.getElementById("serverFilter");
+    const current = serverSel.value;
+    serverSel.innerHTML = `<option value="">All servers</option>` + servers.map(s=>`<option value="${s}">${s}</option>`).join("");
+    serverSel.value = current;
+
+    // filters
+    const fServer = serverSel.value.trim();
+    const fCode = document.getElementById("codeFilter").value.trim().toLowerCase();
+    const fPlayer = document.getElementById("playerFilter").value.trim().toLowerCase();
+
+    const data = raw.filter(x => {
+      if(fServer && x.server !== fServer) return false;
+      if(fCode && !x.code.toLowerCase().includes(fCode)) return false;
+      if(fPlayer && !x.playerName.toLowerCase().includes(fPlayer)) return false;
+      return true;
+    });
+
+    // KPIs
+    const total = data.length;
+    const bot = data.filter(x => x.status.toLowerCase().includes("bot")).length;
+    const player = data.filter(x => x.status.toLowerCase().includes("player")).length;
+    const uniquePlayers = new Set(data.map(x => x.playerId || x.playerName).filter(Boolean)).size;
+
+    setText("kTotal", total.toLocaleString());
+    setText("kBot", bot.toLocaleString());
+    setText("kPlayer", player.toLocaleString());
+    setText("kUnique", uniquePlayers.toLocaleString());
+    setText("rowsCount", total.toLocaleString());
+
+    const last = data.slice().sort((a,b)=>b.dt-a.dt)[0];
+    setText("lastTs", last ? last.dt.toISOString().replace("T"," ").replace("Z"," UTC") : "—");
+
+    // aggs
+    const byMonth = new Map(), byServer = new Map(), byCode = new Map(), byPlayer = new Map();
+    for(const x of data){
+      inc(byMonth, x.month);
+      inc(byServer, x.server || "(none)");
+      inc(byCode, x.code || "(none)");
+      inc(byPlayer, (x.playerName || x.playerId || "(unknown)"));
+    }
+
+    const months = [...byMonth.entries()].sort((a,b)=>a[0].localeCompare(b[0]));
+    setText("badgeMonth", months.length ? `${months[0][0]} → ${months[months.length-1][0]}` : "—");
+
+    const sTop = topN(byServer, 10);
+    const cTop = topN(byCode, 10);
+    const pTop = topN(byPlayer, 10);
+
+    // Chart defaults
+    Chart.defaults.color = "#96a0b2";
+    Chart.defaults.borderColor = "rgba(29,38,56,.8)";
+    Chart.defaults.font.family = "Inter";
+
+    // Line: subtle gold fill, crisp line
+    ensureChart("chartMonth","line",{
+      labels: months.map(x=>x[0]),
+      datasets:[{
+        data: months.map(x=>x[1]),
+        borderColor:"rgba(205,178,107,1)",
+        backgroundColor:"rgba(205,178,107,.10)",
+        fill:true,
+        tension:.32,
+        pointRadius:0,
+        borderWidth:2
+      }]
+    }, baseChartOptions());
+
+    const barData = (pairs)=>({
+      labels: pairs.map(x=>x[0]),
+      datasets:[{
+        data: pairs.map(x=>x[1]),
+        backgroundColor:"rgba(110,168,255,.85)",
+        borderRadius:6,
+        barThickness:18
+      }]
+    });
+
+    ensureChart("chartServer","bar", barData(sTop), baseChartOptions());
+    ensureChart("chartCode","bar", barData(cTop), baseChartOptions());
+
+    // Players chart: gold bars (to differentiate)
+    ensureChart("chartPlayer","bar", {
+      labels: pTop.map(x=>x[0]),
+      datasets:[{
+        data: pTop.map(x=>x[1]),
+        backgroundColor:"rgba(205,178,107,.85)",
+        borderRadius:6,
+        barThickness:18
+      }]
+    }, baseChartOptions());
+
+    renderTable("tblMonth", ["Month","Redeems"], months.slice(-12).reverse().map(([k,v])=>[k, v.toLocaleString()]));
+    renderTable("tblServer", ["Server","Redeems"], sTop.map(([k,v])=>[k, v.toLocaleString()]));
+    renderTable("tblCode", ["Code","Redeems"], cTop.map(([k,v])=>[k, v.toLocaleString()]));
+    renderTable("tblPlayer", ["Player","Redeems"], pTop.map(([k,v])=>[k, v.toLocaleString()]));
+
+    statusEl.textContent = `Loaded ${total.toLocaleString()} rows`;
+  } catch(err){
+    statusEl.textContent = "";
+    showError(String(err?.message || err));
+  }
+}
+
+document.getElementById("reloadBtn").addEventListener("click", load);
+document.getElementById("serverFilter").addEventListener("change", load);
+document.getElementById("codeFilter").addEventListener("input", debounce(load, 250));
+document.getElementById("playerFilter").addEventListener("input", debounce(load, 250));
+function debounce(fn, ms){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; }
+
+load();
+</script>
+</body>
+</html>
