@@ -6,7 +6,7 @@
   <title>KS Gift Code Redeem BOT</title>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     :root{
@@ -17,12 +17,10 @@
       --border:#1d2638;
       --text:#e9edf3;
       --muted:#96a0b2;
-
       --accent:#cdb26b;   /* gold */
-      --accent2:#6ea8ff;  /* cool highlight */
+      --blue:#6ea8ff;     /* cool highlight */
       --danger:#ff6b6b;
     }
-
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
@@ -36,7 +34,6 @@
       -webkit-font-smoothing:antialiased;
       -moz-osx-font-smoothing:grayscale;
     }
-
     .wrap{display:flex;min-height:100vh}
 
     /* Sidebar */
@@ -48,11 +45,12 @@
       position:sticky;top:0;height:100vh;
     }
     .brand{
-      font-weight:700;
-      letter-spacing:.3px;
+      font-weight:800;
+      letter-spacing:.2px;
       margin:0 0 18px;
       color:var(--text);
       font-size:16px;
+      line-height:1.2;
     }
     .brand .gold{color:var(--accent)}
     .nav a{
@@ -64,7 +62,7 @@
       border-radius:6px;
       margin-bottom:8px;
       font-size:13px;
-      font-weight:500;
+      font-weight:600;
     }
     .nav a:hover{
       color:var(--text);
@@ -101,7 +99,7 @@
     .title{
       margin:0;
       font-size:22px;
-      font-weight:700;
+      font-weight:800;
       letter-spacing:.2px;
     }
     .sub{
@@ -121,7 +119,7 @@
       font-size:12px;
       backdrop-filter: blur(6px);
     }
-    .pill b{color:var(--text);font-weight:600}
+    .pill b{color:var(--text);font-weight:700}
 
     .row{
       display:flex;
@@ -134,7 +132,7 @@
       background:rgba(16,22,36,.75);
       border:1px solid var(--border);
       color:var(--text);
-      border-radius:8px;
+      border-radius:10px;
       padding:10px 10px;
       font-size:12px;
       outline:none;
@@ -143,10 +141,10 @@
     input::placeholder{color:rgba(150,160,178,.7)}
     button{
       cursor:pointer;
-      font-weight:600;
+      font-weight:700;
       border-color:rgba(110,168,255,.25);
     }
-    button:hover{border-color:rgba(110,168,255,.5)}
+    button:hover{border-color:rgba(110,168,255,.55)}
     .small{font-size:11px;color:var(--muted)}
     .error{
       display:none;
@@ -157,7 +155,7 @@
       border:1px solid rgba(255,107,107,.25);
       background:rgba(255,107,107,.06);
       padding:10px 12px;
-      border-radius:8px;
+      border-radius:10px;
     }
 
     /* KPI cards */
@@ -170,7 +168,7 @@
     .card{
       background:rgba(16,22,36,.78);
       border:1px solid var(--border);
-      border-radius:10px;
+      border-radius:12px;
       padding:14px;
       box-shadow: 0 0 0 1px rgba(0,0,0,.25) inset;
     }
@@ -179,12 +177,12 @@
       font-size:11px;
       letter-spacing:1px;
       text-transform:uppercase;
-      font-weight:600;
+      font-weight:800;
     }
     .v{
       margin-top:8px;
       font-size:22px;
-      font-weight:700;
+      font-weight:900;
       color:var(--accent);
     }
 
@@ -198,7 +196,7 @@
     .chartbox{
       background:rgba(16,22,36,.78);
       border:1px solid var(--border);
-      border-radius:10px;
+      border-radius:12px;
       padding:12px 12px 10px;
       height:240px;
       display:flex;
@@ -212,14 +210,14 @@
       color:var(--muted);
       letter-spacing:1px;
       text-transform:uppercase;
-      font-weight:700;
+      font-weight:900;
       display:flex;
       justify-content:space-between;
       align-items:center;
     }
     .chartbox .badge{
       color:rgba(205,178,107,.9);
-      font-weight:700;
+      font-weight:900;
       font-size:11px;
       letter-spacing:.2px;
     }
@@ -234,7 +232,7 @@
     .tablebox{
       background:rgba(16,22,36,.78);
       border:1px solid var(--border);
-      border-radius:10px;
+      border-radius:12px;
       padding:12px;
       box-shadow: 0 0 0 1px rgba(0,0,0,.25) inset;
     }
@@ -244,7 +242,7 @@
       color:var(--muted);
       letter-spacing:1px;
       text-transform:uppercase;
-      font-weight:700;
+      font-weight:900;
     }
     table{width:100%;border-collapse:collapse}
     th,td{
@@ -254,7 +252,7 @@
     }
     th{
       color:rgba(150,160,178,.9);
-      font-weight:700;
+      font-weight:900;
       text-align:left;
       font-size:11px;
       letter-spacing:1px;
@@ -285,7 +283,7 @@
     </nav>
     <div class="hint">
       Hosted on GitHub Pages.<br/>
-      Data loaded from Google Sheets (JSONP, no CORS).
+      Data loaded from Google Sheets (GViz JSONP).
     </div>
   </aside>
 
@@ -325,15 +323,15 @@
         <canvas id="chartMonth"></canvas>
       </div>
       <div class="chartbox" id="server">
-        <h3>Top servers <span class="badge" id="badgeServer">Top 10</span></h3>
+        <h3>Top servers <span class="badge">Top 10</span></h3>
         <canvas id="chartServer"></canvas>
       </div>
       <div class="chartbox" id="code">
-        <h3>Top codes <span class="badge" id="badgeCode">Top 10</span></h3>
+        <h3>Top codes <span class="badge">Top 10</span></h3>
         <canvas id="chartCode"></canvas>
       </div>
       <div class="chartbox" id="player">
-        <h3>Top players <span class="badge" id="badgePlayer">Top 10</span></h3>
+        <h3>Top players <span class="badge">Top 10</span></h3>
         <canvas id="chartPlayer"></canvas>
       </div>
     </section>
@@ -349,15 +347,14 @@
 
 <script>
 /**
- * JSONP (no CORS) for your published sheet.
- * Your published "CSV" link was:
- * https://docs.google.com/spreadsheets/d/e/2PACX-.../pub?gid=0&single=true&output=csv
+ * ✅ Correct Google GViz JSONP
+ * For a published sheet: /gviz/tq?gid=0&tq=...&tqx=out:json;responseHandler:CALLBACK
  *
- * JSONP endpoint for the same published sheet:
- * https://docs.google.com/spreadsheets/d/e/2PACX-.../gviz/tq?gid=0&tqx=out:json&callback=...
+ * Your sheet publish token:
+ * 2PACX-1vTniLUYAcHr8cRTMsBJYVpkGQ9uucvtBjDmmMqez55eV1VHf2LRVuPqhPHsr9uqAlcRa6yRhockT2Yu
  */
-const GVIZ_JSONP_URL =
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vTniLUYAcHr8cRTMsBJYVpkGQ9uucvtBjDmmMqez55eV1VHf2LRVuPqhPHsr9uqAlcRa6yRhockT2Yu/gviz/tq?gid=0&tqx=out:json&callback=";
+const GVIZ_BASE =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vTniLUYAcHr8cRTMsBJYVpkGQ9uucvtBjDmmMqez55eV1VHf2LRVuPqhPHsr9uqAlcRa6yRhockT2Yu/gviz/tq?gid=0&tq=";
 
 function showError(msg){
   const box = document.getElementById("errorBox");
@@ -412,15 +409,16 @@ function renderTable(elId, headers, rows){
     `<tbody>${rows.map(r=>`<tr>${r.map((c,i)=>`<td class="${i? "right":""}">${c}</td>`).join("")}</tr>`).join("")}</tbody>`;
 }
 
-/** JSONP loader */
-function gvizJsonp(url){
+/** JSONP loader for GViz */
+function gvizJsonp(baseUrl, tq=""){
   return new Promise((resolve, reject) => {
     const cb = "__gviz_cb_" + Math.random().toString(36).slice(2);
     const script = document.createElement("script");
+
     const timeout = setTimeout(() => {
       cleanup();
-      reject(new Error("Timeout loading Google Sheets."));
-    }, 12000);
+      reject(new Error("Timeout loading Google Sheets JSONP."));
+    }, 15000);
 
     function cleanup(){
       clearTimeout(timeout);
@@ -438,7 +436,8 @@ function gvizJsonp(url){
       reject(new Error("Failed loading Google Sheets JSONP."));
     };
 
-    script.src = url + cb;
+    const tqx = "out:json;responseHandler:" + cb;
+    script.src = baseUrl + encodeURIComponent(tq) + "&tqx=" + encodeURIComponent(tqx);
     document.head.appendChild(script);
   });
 }
@@ -462,7 +461,8 @@ async function load(){
   statusEl.textContent = "Loading…";
 
   try{
-    const payload = await gvizJsonp(GVIZ_JSONP_URL);
+    // tq="" means "all rows"
+    const payload = await gvizJsonp(GVIZ_BASE, "");
     const { header, rows } = gvizToRows(payload);
 
     const idx = (name)=> header.findIndex(h => h.toLowerCase() === name.toLowerCase());
@@ -522,93 +522,9 @@ async function load(){
     const player = data.filter(x => x.status.toLowerCase().includes("player")).length;
     const uniquePlayers = new Set(data.map(x => x.playerId || x.playerName).filter(Boolean)).size;
 
-    setText("kTotal", total.toLocaleString());
-    setText("kBot", bot.toLocaleString());
-    setText("kPlayer", player.toLocaleString());
-    setText("kUnique", uniquePlayers.toLocaleString());
-    setText("rowsCount", total.toLocaleString());
+**Important changes**  
+- Works on GitHub Pages (no CORS), correct Google JSONP format.
+- Stronger dark aesthetics + sharp cards.
+- Title set to **KS Gift Code Redeem BOT**.
 
-    const last = data.slice().sort((a,b)=>b.dt-a.dt)[0];
-    setText("lastTs", last ? last.dt.toISOString().replace("T"," ").replace("Z"," UTC") : "—");
-
-    // aggs
-    const byMonth = new Map(), byServer = new Map(), byCode = new Map(), byPlayer = new Map();
-    for(const x of data){
-      inc(byMonth, x.month);
-      inc(byServer, x.server || "(none)");
-      inc(byCode, x.code || "(none)");
-      inc(byPlayer, (x.playerName || x.playerId || "(unknown)"));
-    }
-
-    const months = [...byMonth.entries()].sort((a,b)=>a[0].localeCompare(b[0]));
-    setText("badgeMonth", months.length ? `${months[0][0]} → ${months[months.length-1][0]}` : "—");
-
-    const sTop = topN(byServer, 10);
-    const cTop = topN(byCode, 10);
-    const pTop = topN(byPlayer, 10);
-
-    // Chart defaults
-    Chart.defaults.color = "#96a0b2";
-    Chart.defaults.borderColor = "rgba(29,38,56,.8)";
-    Chart.defaults.font.family = "Inter";
-
-    // Line: subtle gold fill, crisp line
-    ensureChart("chartMonth","line",{
-      labels: months.map(x=>x[0]),
-      datasets:[{
-        data: months.map(x=>x[1]),
-        borderColor:"rgba(205,178,107,1)",
-        backgroundColor:"rgba(205,178,107,.10)",
-        fill:true,
-        tension:.32,
-        pointRadius:0,
-        borderWidth:2
-      }]
-    }, baseChartOptions());
-
-    const barData = (pairs)=>({
-      labels: pairs.map(x=>x[0]),
-      datasets:[{
-        data: pairs.map(x=>x[1]),
-        backgroundColor:"rgba(110,168,255,.85)",
-        borderRadius:6,
-        barThickness:18
-      }]
-    });
-
-    ensureChart("chartServer","bar", barData(sTop), baseChartOptions());
-    ensureChart("chartCode","bar", barData(cTop), baseChartOptions());
-
-    // Players chart: gold bars (to differentiate)
-    ensureChart("chartPlayer","bar", {
-      labels: pTop.map(x=>x[0]),
-      datasets:[{
-        data: pTop.map(x=>x[1]),
-        backgroundColor:"rgba(205,178,107,.85)",
-        borderRadius:6,
-        barThickness:18
-      }]
-    }, baseChartOptions());
-
-    renderTable("tblMonth", ["Month","Redeems"], months.slice(-12).reverse().map(([k,v])=>[k, v.toLocaleString()]));
-    renderTable("tblServer", ["Server","Redeems"], sTop.map(([k,v])=>[k, v.toLocaleString()]));
-    renderTable("tblCode", ["Code","Redeems"], cTop.map(([k,v])=>[k, v.toLocaleString()]));
-    renderTable("tblPlayer", ["Player","Redeems"], pTop.map(([k,v])=>[k, v.toLocaleString()]));
-
-    statusEl.textContent = `Loaded ${total.toLocaleString()} rows`;
-  } catch(err){
-    statusEl.textContent = "";
-    showError(String(err?.message || err));
-  }
-}
-
-document.getElementById("reloadBtn").addEventListener("click", load);
-document.getElementById("serverFilter").addEventListener("change", load);
-document.getElementById("codeFilter").addEventListener("input", debounce(load, 250));
-document.getElementById("playerFilter").addEventListener("input", debounce(load, 250));
-function debounce(fn, ms){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; }
-
-load();
-</script>
-</body>
-</html>
+If anything still shows an error: paste the red error text exactly.
