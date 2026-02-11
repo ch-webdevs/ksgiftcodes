@@ -10,16 +10,9 @@
 
   <style>
     :root{
-      --bg:#0a0c10;
-      --sidebar:#0d1017;
-      --panel:#101624;
-      --panel2:#0f1421;
-      --border:#1d2638;
-      --text:#e9edf3;
-      --muted:#96a0b2;
-      --accent:#cdb26b;   /* gold */
-      --blue:#6ea8ff;     /* cool highlight */
-      --danger:#ff6b6b;
+      --bg:#0a0c10; --sidebar:#0d1017; --panel:#101624; --panel2:#0f1421;
+      --border:#1d2638; --text:#e9edf3; --muted:#96a0b2;
+      --accent:#cdb26b; --blue:#6ea8ff; --danger:#ff6b6b;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -35,230 +28,81 @@
       -moz-osx-font-smoothing:grayscale;
     }
     .wrap{display:flex;min-height:100vh}
-
-    /* Sidebar */
     .sidebar{
       width:250px;flex:0 0 250px;
       background:linear-gradient(180deg, rgba(13,16,23,.98), rgba(10,12,16,.98));
       border-right:1px solid var(--border);
-      padding:22px 18px;
-      position:sticky;top:0;height:100vh;
+      padding:22px 18px;position:sticky;top:0;height:100vh;
     }
-    .brand{
-      font-weight:900;
-      letter-spacing:.2px;
-      margin:0 0 18px;
-      color:var(--text);
-      font-size:16px;
-      line-height:1.2;
-    }
+    .brand{font-weight:900;margin:0 0 18px;font-size:16px;line-height:1.2}
     .brand .gold{color:var(--accent)}
     .nav a{
-      display:block;
-      text-decoration:none;
-      color:var(--muted);
-      padding:10px 10px;
-      border:1px solid transparent;
-      border-radius:10px;
-      margin-bottom:8px;
-      font-size:13px;
-      font-weight:700;
+      display:block;text-decoration:none;color:var(--muted);
+      padding:10px 10px;border:1px solid transparent;border-radius:10px;
+      margin-bottom:8px;font-size:13px;font-weight:700;
     }
-    .nav a:hover{
-      color:var(--text);
-      border-color:rgba(205,178,107,.25);
-      background:rgba(16,22,36,.7);
-    }
-    .nav a.active{
-      color:var(--text);
-      border-color:rgba(110,168,255,.35);
-      background:rgba(110,168,255,.08);
-    }
-    .hint{
-      margin-top:14px;
-      font-size:12px;
-      color:var(--muted);
-      line-height:1.35;
-      border-top:1px solid var(--border);
-      padding-top:14px;
-    }
+    .nav a:hover{color:var(--text);border-color:rgba(205,178,107,.25);background:rgba(16,22,36,.7)}
+    .nav a.active{color:var(--text);border-color:rgba(110,168,255,.35);background:rgba(110,168,255,.08)}
+    .hint{margin-top:14px;font-size:12px;color:var(--muted);line-height:1.35;border-top:1px solid var(--border);padding-top:14px}
 
-    /* Main */
-    main{
-      flex:1;
-      padding:28px 30px;
-      max-width:1500px;
-    }
-    .top{
-      display:flex;
-      align-items:flex-end;
-      justify-content:space-between;
-      gap:16px;
-      margin-bottom:18px;
-    }
-    .title{
-      margin:0;
-      font-size:22px;
-      font-weight:900;
-      letter-spacing:.2px;
-    }
-    .sub{
-      margin-top:6px;
-      color:var(--muted);
-      font-size:12px;
-    }
+    main{flex:1;padding:28px 30px;max-width:1500px}
+    .top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:18px}
+    .title{margin:0;font-size:22px;font-weight:900}
+    .sub{margin-top:6px;color:var(--muted);font-size:12px}
     .pill{
-      display:inline-flex;
-      gap:10px;
-      align-items:center;
-      border:1px solid var(--border);
-      background:rgba(16,22,36,.75);
-      padding:10px 12px;
-      border-radius:12px;
-      color:var(--muted);
-      font-size:12px;
+      display:inline-flex;gap:10px;align-items:center;
+      border:1px solid var(--border);background:rgba(16,22,36,.75);
+      padding:10px 12px;border-radius:12px;color:var(--muted);font-size:12px;
       backdrop-filter: blur(6px);
     }
     .pill b{color:var(--text);font-weight:800}
 
-    .row{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex-wrap:wrap;
-      margin:10px 0 18px;
-    }
+    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:10px 0 18px}
     input,select,button{
-      background:rgba(16,22,36,.75);
-      border:1px solid var(--border);
-      color:var(--text);
-      border-radius:12px;
-      padding:10px 10px;
-      font-size:12px;
-      outline:none;
-      backdrop-filter: blur(6px);
+      background:rgba(16,22,36,.75);border:1px solid var(--border);color:var(--text);
+      border-radius:12px;padding:10px 10px;font-size:12px;outline:none;backdrop-filter: blur(6px);
     }
     input::placeholder{color:rgba(150,160,178,.7)}
-    button{
-      cursor:pointer;
-      font-weight:800;
-      border-color:rgba(110,168,255,.25);
-    }
+    button{cursor:pointer;font-weight:800;border-color:rgba(110,168,255,.25)}
     button:hover{border-color:rgba(110,168,255,.55)}
     .small{font-size:11px;color:var(--muted)}
 
     .error{
-      display:none;
-      margin-top:10px;
-      color:var(--danger);
-      font-size:12px;
-      white-space:pre-wrap;
-      border:1px solid rgba(255,107,107,.25);
-      background:rgba(255,107,107,.06);
-      padding:10px 12px;
-      border-radius:12px;
+      display:none;margin-top:10px;color:var(--danger);font-size:12px;white-space:pre-wrap;
+      border:1px solid rgba(255,107,107,.25);background:rgba(255,107,107,.06);
+      padding:10px 12px;border-radius:12px;
     }
 
-    /* KPI cards */
-    .grid4{
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:12px;
-      margin:0 0 16px;
-    }
+    .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0 0 16px}
     .card{
-      background:rgba(16,22,36,.78);
-      border:1px solid var(--border);
-      border-radius:14px;
-      padding:14px;
-      box-shadow: 0 0 0 1px rgba(0,0,0,.25) inset;
+      background:rgba(16,22,36,.78);border:1px solid var(--border);
+      border-radius:14px;padding:14px;box-shadow:0 0 0 1px rgba(0,0,0,.25) inset;
     }
-    .k{
-      color:var(--muted);
-      font-size:11px;
-      letter-spacing:1px;
-      text-transform:uppercase;
-      font-weight:900;
-    }
-    .v{
-      margin-top:8px;
-      font-size:22px;
-      font-weight:900;
-      color:var(--accent);
-    }
+    .k{color:var(--muted);font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:900}
+    .v{margin-top:8px;font-size:22px;font-weight:900;color:var(--accent)}
 
-    /* Charts */
-    .charts{
-      display:grid;
-      grid-template-columns:repeat(2,1fr);
-      gap:12px;
-      margin-bottom:16px;
-    }
+    .charts{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px}
     .chartbox{
-      background:rgba(16,22,36,.78);
-      border:1px solid var(--border);
-      border-radius:14px;
-      padding:12px 12px 10px;
-      height:240px;
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-      box-shadow: 0 0 0 1px rgba(0,0,0,.25) inset;
+      background:rgba(16,22,36,.78);border:1px solid var(--border);border-radius:14px;
+      padding:12px 12px 10px;height:240px;display:flex;flex-direction:column;gap:8px;
+      box-shadow:0 0 0 1px rgba(0,0,0,.25) inset;
     }
     .chartbox h3{
-      margin:0;
-      font-size:11px;
-      color:var(--muted);
-      letter-spacing:1px;
-      text-transform:uppercase;
-      font-weight:900;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
+      margin:0;font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;
+      font-weight:900;display:flex;justify-content:space-between;align-items:center;
     }
-    .badge{
-      color:rgba(205,178,107,.9);
-      font-weight:900;
-      font-size:11px;
-      letter-spacing:.2px;
-    }
+    .badge{color:rgba(205,178,107,.9);font-weight:900;font-size:11px}
     .chartbox canvas{flex:1;min-height:0}
 
-    /* Tables */
-    .tables{
-      display:grid;
-      grid-template-columns:repeat(2,1fr);
-      gap:12px;
-    }
+    .tables{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
     .tablebox{
-      background:rgba(16,22,36,.78);
-      border:1px solid var(--border);
-      border-radius:14px;
-      padding:12px;
-      box-shadow: 0 0 0 1px rgba(0,0,0,.25) inset;
+      background:rgba(16,22,36,.78);border:1px solid var(--border);border-radius:14px;
+      padding:12px;box-shadow:0 0 0 1px rgba(0,0,0,.25) inset;
     }
-    .tablebox h3{
-      margin:0 0 10px;
-      font-size:11px;
-      color:var(--muted);
-      letter-spacing:1px;
-      text-transform:uppercase;
-      font-weight:900;
-    }
+    .tablebox h3{margin:0 0 10px;font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;font-weight:900}
     table{width:100%;border-collapse:collapse}
-    th,td{
-      padding:10px 8px;
-      border-bottom:1px solid rgba(29,38,56,.9);
-      font-size:13px;
-    }
-    th{
-      color:rgba(150,160,178,.9);
-      font-weight:900;
-      text-align:left;
-      font-size:11px;
-      letter-spacing:1px;
-      text-transform:uppercase;
-    }
+    th,td{padding:10px 8px;border-bottom:1px solid rgba(29,38,56,.9);font-size:13px}
+    th{color:rgba(150,160,178,.9);font-weight:900;text-align:left;font-size:11px;letter-spacing:1px;text-transform:uppercase}
     tr:hover td{background:rgba(110,168,255,.06)}
     .right{text-align:right}
 
@@ -283,8 +127,8 @@
       <a href="#player">By Player</a>
     </nav>
     <div class="hint">
-      Hosted on GitHub Pages.<br/>
-      Data loaded from Google Sheets (GViz JSONP).
+      GitHub Pages • Google Sheet CSV<br/>
+      Loaded via CORS relay (no backend).
     </div>
   </aside>
 
@@ -347,11 +191,13 @@
 </div>
 
 <script>
-/** ========= CONFIG (your published sheet token) ========= */
-const GVIZ_BASE =
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vTniLUYAcHr8cRTMsBJYVpkGQ9uucvtBjDmmMqez55eV1VHf2LRVuPqhPHsr9uqAlcRa6yRhockT2Yu/gviz/tq?gid=0&tq=";
+/** ========= Your published CSV ========= */
+const SHEET_CSV =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vTniLUYAcHr8cRTMsBJYVpkGQ9uucvtBjDmmMqez55eV1VHf2LRVuPqhPHsr9uqAlcRa6yRhockT2Yu/pub?gid=0&single=true&output=csv";
 
-/** ========= UI helpers ========= */
+/** ========= CORS relay (free) ========= */
+const CSV_URL = "https://api.allorigins.win/raw?url=" + encodeURIComponent(SHEET_CSV);
+
 function showError(msg){
   const box = document.getElementById("errorBox");
   box.style.display = "block";
@@ -364,14 +210,12 @@ function clearError(){
 }
 const setText=(id,v)=> document.getElementById(id).textContent = v;
 
-/** ========= Data helpers ========= */
 const clean = (s)=> (s ?? "").toString().trim();
 const toDate = (s)=> { const d = new Date(s); return isNaN(d) ? null : d; };
 const monthKey = (d)=> `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,"0")}`;
 const inc = (m,k)=> m.set(k,(m.get(k)||0)+1);
 const topN = (m,n)=> [...m.entries()].sort((a,b)=>b[1]-a[1]).slice(0,n);
 
-/** ========= Charts ========= */
 let charts = {};
 function ensureChart(id, type, data, options){
   if(charts[id]) charts[id].destroy();
@@ -379,19 +223,8 @@ function ensureChart(id, type, data, options){
 }
 function baseChartOptions(){
   return {
-    responsive:true,
-    maintainAspectRatio:false,
-    plugins:{
-      legend:{display:false},
-      tooltip:{
-        backgroundColor:"rgba(10,12,16,.95)",
-        borderColor:"rgba(205,178,107,.25)",
-        borderWidth:1,
-        titleColor:"#e9edf3",
-        bodyColor:"#e9edf3",
-        padding:10
-      }
-    },
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:false} },
     scales:{
       x:{ grid:{ color:"rgba(29,38,56,.7)" }, ticks:{ color:"#96a0b2", font:{ size:11 } } },
       y:{ grid:{ color:"rgba(29,38,56,.7)" }, ticks:{ color:"#96a0b2", font:{ size:11 } }, beginAtZero:true }
@@ -404,63 +237,45 @@ function renderTable(elId, headers, rows){
     `<thead><tr>${headers.map(h=>`<th>${h}</th>`).join("")}</tr></thead>` +
     `<tbody>${rows.map(r=>`<tr>${r.map((c,i)=>`<td class="${i? "right":""}">${c}</td>`).join("")}</tr>`).join("")}</tbody>`;
 }
+function debounce(fn, ms){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; }
 
-/** ========= GViz JSONP loader ========= */
-function gvizJsonp(baseUrl, tq=""){
-  return new Promise((resolve, reject) => {
-    const cb = "__gviz_cb_" + Math.random().toString(36).slice(2);
-    const script = document.createElement("script");
-
-    const timeout = setTimeout(() => {
-      cleanup();
-      reject(new Error("Timeout loading Google Sheets (GViz JSONP)."));
-    }, 15000);
-
-    function cleanup(){
-      clearTimeout(timeout);
-      script.remove();
-      try { delete window[cb]; } catch {}
+/** CSV parser (handles quotes) */
+function parseCSV(text){
+  const rows = [];
+  let i=0, cur="", row=[], inQ=false;
+  while(i < text.length){
+    const c = text[i];
+    if(inQ){
+      if(c === '"' && text[i+1] === '"'){ cur+='"'; i+=2; continue; }
+      if(c === '"'){ inQ=false; i++; continue; }
+      cur+=c; i++; continue;
+    } else {
+      if(c === '"'){ inQ=true; i++; continue; }
+      if(c === ','){ row.push(cur); cur=""; i++; continue; }
+      if(c === '\n'){ row.push(cur); rows.push(row); row=[]; cur=""; i++; continue; }
+      if(c === '\r'){ i++; continue; }
+      cur+=c; i++; continue;
     }
-
-    window[cb] = (payload) => {
-      cleanup();
-      resolve(payload);
-    };
-
-    script.onerror = () => {
-      cleanup();
-      reject(new Error("Failed loading Google Sheets (GViz JSONP)."));
-    };
-
-    const tqx = "out:json;responseHandler:" + cb;
-    script.src = baseUrl + encodeURIComponent(tq) + "&tqx=" + encodeURIComponent(tqx);
-    document.head.appendChild(script);
-  });
+  }
+  row.push(cur);
+  rows.push(row);
+  return rows.filter(r => r.some(v => (v||"").trim() !== ""));
 }
 
-function gvizToRows(payload){
-  const table = payload?.table;
-  if(!table?.cols || !table?.rows) throw new Error("Unexpected GViz response (no table).");
-  const header = table.cols.map(c => clean(c.label));
-  const rows = table.rows.map(r => (r.c || []).map(cell => {
-    // Prefer formatted string (f) if present, else raw value (v)
-    const v = cell?.f ?? cell?.v;
-    return v == null ? "" : String(v);
-  }));
-  return { header, rows };
-}
-
-/** ========= Main load ========= */
 async function load(){
   clearError();
   const statusEl = document.getElementById("statusText");
   statusEl.textContent = "Loading…";
 
   try{
-    // Empty tq loads the whole sheet
-    const payload = await gvizJsonp(GVIZ_BASE, "");
-    const { header, rows } = gvizToRows(payload);
+    const res = await fetch(CSV_URL, { cache:"no-store" });
+    if(!res.ok) throw new Error(`Fetch failed: ${res.status} ${res.statusText}`);
+    const text = await res.text();
 
+    const grid = parseCSV(text);
+    if(grid.length < 2) throw new Error("Sheet returned no rows.");
+
+    const header = grid[0].map(h => clean(h));
     const idx = (name)=> header.findIndex(h => h.toLowerCase() === name.toLowerCase());
 
     const iDate = idx("Date");
@@ -478,20 +293,21 @@ async function load(){
     }
 
     const raw = [];
-    for(const r of rows){
-      const dt = toDate(r[iDate]);
+    for(let r=1;r<grid.length;r++){
+      const row = grid[r];
+      const dt = toDate(row[iDate]);
       if(!dt) continue;
       raw.push({
         dt,
         month: monthKey(dt),
-        playerId: clean(r[iPid]),
-        code: clean(r[iCode]),
-        status: clean(r[iStat]),
-        playerName: clean(r[iPnm]),
-        server: clean(r[iSrv]),
+        playerId: clean(row[iPid]),
+        code: clean(row[iCode]),
+        status: clean(row[iStat]),
+        playerName: clean(row[iPnm]),
+        server: clean(row[iSrv]),
       });
     }
-    if(!raw.length) throw new Error("No parsable rows. Check your Date column format in the sheet.");
+    if(!raw.length) throw new Error("No parsable rows. Check Date format in sheet.");
 
     // Populate server dropdown
     const servers = [...new Set(raw.map(x=>x.server).filter(Boolean))].sort();
@@ -500,7 +316,7 @@ async function load(){
     serverSel.innerHTML = `<option value="">All servers</option>` + servers.map(s=>`<option value="${s}">${s}</option>`).join("");
     serverSel.value = servers.includes(prev) ? prev : "";
 
-    // Apply filters
+    // Filters
     const fServer = serverSel.value.trim();
     const fCode = document.getElementById("codeFilter").value.trim().toLowerCase();
     const fPlayer = document.getElementById("playerFilter").value.trim().toLowerCase();
@@ -543,58 +359,35 @@ async function load(){
     const cTop = topN(byCode, 10);
     const pTop = topN(byPlayer, 10);
 
-    // Chart defaults
     Chart.defaults.color = "#96a0b2";
     Chart.defaults.borderColor = "rgba(29,38,56,.85)";
     Chart.defaults.font.family = "Inter";
 
-    // Month line (gold)
     ensureChart("chartMonth","line",{
       labels: months.map(x=>x[0]),
       datasets:[{
         data: months.map(x=>x[1]),
         borderColor:"rgba(205,178,107,1)",
         backgroundColor:"rgba(205,178,107,.10)",
-        fill:true,
-        tension:.32,
-        pointRadius:0,
-        borderWidth:2
+        fill:true, tension:.32, pointRadius:0, borderWidth:2
       }]
     }, baseChartOptions());
 
-    // Bars (blue for server/code, gold for players)
-    const barOptions = baseChartOptions();
     ensureChart("chartServer","bar",{
       labels: sTop.map(x=>x[0]),
-      datasets:[{
-        data: sTop.map(x=>x[1]),
-        backgroundColor:"rgba(110,168,255,.85)",
-        borderRadius:8,
-        barThickness:18
-      }]
-    }, barOptions);
+      datasets:[{ data: sTop.map(x=>x[1]), backgroundColor:"rgba(110,168,255,.85)", borderRadius:8, barThickness:18 }]
+    }, baseChartOptions());
 
     ensureChart("chartCode","bar",{
       labels: cTop.map(x=>x[0]),
-      datasets:[{
-        data: cTop.map(x=>x[1]),
-        backgroundColor:"rgba(110,168,255,.85)",
-        borderRadius:8,
-        barThickness:18
-      }]
-    }, barOptions);
+      datasets:[{ data: cTop.map(x=>x[1]), backgroundColor:"rgba(110,168,255,.85)", borderRadius:8, barThickness:18 }]
+    }, baseChartOptions());
 
     ensureChart("chartPlayer","bar",{
       labels: pTop.map(x=>x[0]),
-      datasets:[{
-        data: pTop.map(x=>x[1]),
-        backgroundColor:"rgba(205,178,107,.85)",
-        borderRadius:8,
-        barThickness:18
-      }]
-    }, barOptions);
+      datasets:[{ data: pTop.map(x=>x[1]), backgroundColor:"rgba(205,178,107,.85)", borderRadius:8, barThickness:18 }]
+    }, baseChartOptions());
 
-    // Tables
     renderTable("tblMonth", ["Month","Redeems"], months.slice(-12).reverse().map(([k,v])=>[k, v.toLocaleString()]));
     renderTable("tblServer", ["Server","Redeems"], sTop.map(([k,v])=>[k, v.toLocaleString()]));
     renderTable("tblCode", ["Code","Redeems"], cTop.map(([k,v])=>[k, v.toLocaleString()]));
@@ -607,12 +400,10 @@ async function load(){
   }
 }
 
-/** ========= Events ========= */
 document.getElementById("reloadBtn").addEventListener("click", load);
 document.getElementById("serverFilter").addEventListener("change", load);
 document.getElementById("codeFilter").addEventListener("input", debounce(load, 250));
 document.getElementById("playerFilter").addEventListener("input", debounce(load, 250));
-function debounce(fn, ms){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; }
 
 load();
 </script>
