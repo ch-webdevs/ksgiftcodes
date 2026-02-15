@@ -73,7 +73,8 @@
       padding:10px 12px;border-radius:12px;
     }
 
-    .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0 0 16px}
+    /* UPDATED: 5 KPI cards */
+    .grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:0 0 16px}
     .card{
       background:rgba(16,22,36,.78);border:1px solid var(--border);
       border-radius:14px;padding:14px;box-shadow:0 0 0 1px rgba(0,0,0,.25) inset;
@@ -152,7 +153,7 @@
     .primary:hover{border-color:rgba(205,178,107,.55)}
 
     @media(max-width:1100px){
-      .grid4{grid-template-columns:repeat(2,1fr)}
+      .grid5{grid-template-columns:repeat(2,1fr)}
       .charts,.tables,.actions{grid-template-columns:1fr}
       .sidebar{display:none}
       main{padding:18px}
@@ -199,10 +200,12 @@
 
     <div id="errorBox" class="error"></div>
 
-    <section class="grid4" id="overview">
+    <!-- UPDATED KPIs -->
+    <section class="grid5" id="overview">
       <div class="card"><div class="k">Total redeems</div><div class="v" id="kTotal">—</div></div>
       <div class="card"><div class="k">Claimed by bot</div><div class="v" id="kBot">—</div></div>
-      <div class="card"><div class="k">Claimed by player</div><div class="v" id="kPlayer">—</div></div>
+      <div class="card"><div class="k">Avg bot claims / player</div><div class="v" id="kAvgBotPerPlayer">—</div></div>
+      <div class="card"><div class="k">Codes claimed</div><div class="v" id="kCodesClaimed">—</div></div>
       <div class="card"><div class="k">Unique players</div><div class="v" id="kUnique">—</div></div>
     </section>
 
@@ -450,15 +453,24 @@ async function load(){
       return true;
     });
 
-    // KPIs
+    // KPIs (UPDATED)
     const total = data.length;
-    const bot = data.filter(x => x.status.toLowerCase().includes("bot")).length;
-    const player = data.filter(x => x.status.toLowerCase().includes("player")).length;
+
+    const botRows = data.filter(x => x.status.toLowerCase().includes("bot"));
+    const bot = botRows.length;
+
     const uniquePlayers = new Set(data.map(x => x.playerId || x.playerName).filter(Boolean)).size;
+
+    // avg bot claims per unique player
+    const avgBotPerPlayer = uniquePlayers ? (bot / uniquePlayers) : 0;
+
+    // number of unique codes that were claimed by bot at least once
+    const codesClaimed = new Set(botRows.map(x => (x.code || "").trim()).filter(Boolean)).size;
 
     setText("kTotal", total.toLocaleString());
     setText("kBot", bot.toLocaleString());
-    setText("kPlayer", player.toLocaleString());
+    setText("kAvgBotPerPlayer", avgBotPerPlayer.toFixed(2));
+    setText("kCodesClaimed", codesClaimed.toLocaleString());
     setText("kUnique", uniquePlayers.toLocaleString());
     setText("rowsCount", total.toLocaleString());
 
